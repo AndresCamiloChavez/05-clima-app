@@ -1,4 +1,4 @@
-const { inquirerMenu, pausa } = require("./helpers/inquirer");
+const { inquirerMenu, pausa, leerInput } = require("./helpers/inquirer");
 const Busquedas = require("./models/busquedas");
 
 const main = async () => {
@@ -10,10 +10,18 @@ const main = async () => {
 
     switch (opcionSeleccionada) {
       case 1:
-        
+          const lugar = await leerInput('¿Lugar a buscar?');
+
+          busquedas.ciudad(lugar);
+          console.log('\n información del clima \n'.green);
+          console.log('Ciudad:', );
+          console.log('Lat:', );
+          console.log('Log:', );
+          console.log('Temperatura:', );
+          console.log('Temperatura mímina:', );
+          console.log('Temperatura máxima:', );
         break;
       case 2:
-        console.log("caso 2");
         break;
       case 3:
         console.log("caso 3");
@@ -23,7 +31,7 @@ const main = async () => {
 
         break;
     }
-    await pausa()
+    await pausa();
   } while (opcionSeleccionada !== 0);
 };
 
