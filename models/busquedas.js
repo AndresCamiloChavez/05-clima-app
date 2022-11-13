@@ -15,6 +15,14 @@ class Busquedas {
     };
   }
 
+  get paramsWeather() {
+    return {
+      appid: process.env.OPENWEATHER,
+      units: "metric",
+      lang: "es",
+    };
+  }
+
   async ciudad(lugar = "") {
     try {
       const instance = axios.create({
@@ -35,6 +43,27 @@ class Busquedas {
     console.log(response);
 
     return []; //retornar los lugares que coincidan
+  }
+  async climaPorLugar(lat, lon) {
+    let respuesta = {};
+    try {
+      //crear instacia de axios
+      const instance = await axios.create({
+        baseURL: "https://api.openweathermap.org/data/2.5/weather",
+        params: { ...this.paramsWeather, lat, lon },
+      });
+      const { data } = await instance.get();
+      respuesta = {
+        descripcion: data.weather[0].description,
+        temp_min: data.main.temp_min,
+        temp_max: data.main.temp_max,
+        temp: data.main.temp,
+      };
+      // respuesta -> extrer la data ,, descripción "nubes", temperatura mimina maxima normal
+    } catch (error) {
+      console.log("Ocurrió un error", error);
+    }
+    return respuesta;
   }
 }
 
