@@ -1,12 +1,38 @@
+const fs = require('fs');
 const axios = require("axios");
 
+
 class Busquedas {
-  historial = ["Bogotá", "Madrid", "Samacá"];
+  historial = [];
+  dbPath = './db/database.json';
 
   constructor() {
-    //TODO: LEER DB SI EXISTE
+    this.leerDB()
   }
 
+  get historialCapitalizado(){
+    return this.historial.map(lugar => {
+    let i = 0;
+    let total = '';
+    let hayEspacio = false;
+    for( let letra of lugar){
+
+      if(i == 0){
+        total += letra.toUpperCase();
+      }else if(!!hayEspacio){
+        total += letra.toUpperCase();
+        hayEspacio = false;
+      }else{
+        total += letra;
+      }
+      if(letra == ' '){
+        hayEspacio = true;
+      }
+      i += 1;
+    }
+      return total;
+    });
+  }
   get paramsMapbox() {
     return {
       limit: 5,
@@ -64,6 +90,38 @@ class Busquedas {
       console.log("Ocurrió un error", error);
     }
     return respuesta;
+  }
+
+  agregarHistorial(lugar = ''){
+    
+      lugar.array.forEach(element => {
+        
+      });
+    if(this.historial.includes(lugar.toLowerCase())){
+      return;
+    }
+    this.historial.unshift(lugar.toLocaleLowerCase());
+
+    this.guardarDB();
+    //prevenir dublicidad 
+    //grabar en db o txt
+  }
+
+  guardarDB(){
+    const payload = {
+      historial: this.historial
+    };
+    fs.writeFileSync(this.dbPath, JSON.stringify(payload));
+  }
+  leerDB(){
+    if(!fs.existsSync(this.dbPath)) return;
+
+    const info = fs.readFileSync(this.dbPath, {
+      encoding: 'utf-8'
+    });
+    const data = JSON.parse(info).historial;
+
+    this.historial = data;
   }
 }
 

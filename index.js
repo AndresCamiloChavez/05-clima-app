@@ -1,5 +1,10 @@
 require("dotenv").config();
-const { inquirerMenu, pausa, leerInput, listadoLugares } = require("./helpers/inquirer");
+const {
+  inquirerMenu,
+  pausa,
+  leerInput,
+  listadoLugares,
+} = require("./helpers/inquirer");
 const Busquedas = require("./models/busquedas");
 // console.log(process.env);
 const main = async () => {
@@ -12,10 +17,20 @@ const main = async () => {
       case 1:
         const lugar = await leerInput("¿Lugar a buscar?");
         const lugaresQueCoinciden = await busquedas.ciudad(lugar);
-        
+
         const idSeleccionado = await listadoLugares(lugaresQueCoinciden);
-        const lugarSeleccionado = lugaresQueCoinciden.find(lugar => lugar.id == idSeleccionado);
-        const lugarFinal = await busquedas.climaPorLugar(lugarSeleccionado.lat, lugarSeleccionado.lng);
+        if (idSeleccionado == 0) continue;
+
+
+        const lugarSeleccionado = lugaresQueCoinciden.find(
+          (lugar) => lugar.id == idSeleccionado
+        );
+        busquedas.agregarHistorial(lugarSeleccionado.nombre)
+
+        const lugarFinal = await busquedas.climaPorLugar(
+          lugarSeleccionado.lat,
+          lugarSeleccionado.lng
+        );
         busquedas.ciudad(lugar);
         console.log("\n información del clima \n".green);
         console.log("Ciudad:", lugarSeleccionado.nombre);
@@ -24,9 +39,12 @@ const main = async () => {
         console.log("Temperatura:", lugarFinal.temp);
         console.log("Temperatura mímina:", lugarFinal.temp_min);
         console.log("Temperatura máxima:", lugarFinal.temp_max);
-        console.log("Cómo está el clima:",  lugarFinal.descripcion);
+        console.log("Cómo está el clima:", lugarFinal.descripcion);
         break;
       case 2:
+        busquedas.historialCapitalizado.forEach((lugar, i) => {
+          console.log(`${((i+1)+'').green} ${lugar}`);
+        });
         break;
       case 3:
         console.log("caso 3");
